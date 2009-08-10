@@ -3,14 +3,16 @@ Data::FormValidator::Constraints::Words
 
 DESCRIPTION
 
-Validation of the META.yml file in a CPAN distribution.
-
-This module was written to ensure that a META.yml file, provided with a 
-standard distribution uploaded to CPAN, meets the specifications that are
-slowly being introduced to module uploads, via the use of package makers and
-installers such as ExtUtils::MakeMaker, Module::Build and Module::Install.
+Data::FormValidator::Constraints::Words provides several methods that can be
+used to generate constraint closures for use with Data::FormValidator for the
+purpose of validating textual input.
 
 DEPENDENCIES
+
+Although not exactly a dependency, the following was the intended target for
+this distribution:
+
+  Data::FormValidator >= 0
 
 For testing purposes, the following modules are required:
 
@@ -21,6 +23,7 @@ For testing purposes, the following modules are desireable, but not essential:
   Test::Pod           >= 1.00
   Test::Pod::Coverage >= 0.08
   Pod::Coverage
+  Test::CPAN::Meta    >= 1.13
 
 INSTALLATION
 
@@ -68,7 +71,7 @@ for Miss Barbell Productions http://www.missbarbell.co.uk.
 
 COPYRIGHT AND LICENSE
 
-  Copyright (C) 2008 Barbie for Miss Barbell Productions.
+  Copyright (C) 2008,2009 Barbie for Miss Barbell Productions.
 
   This module is free software; you can redistribute it and/or 
   modify it under the same terms as Perl itself.
