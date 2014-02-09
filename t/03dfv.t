@@ -7,7 +7,7 @@ eval "use Data::FormValidator";
 if($@) {
     plan skip_all => "Data::FormValidator required for testing intergration with DFV";
 } else {
-    plan tests => 10;
+    plan tests => 42;
 }
 
 use Data::FormValidator::Constraints::Words;
@@ -21,31 +21,38 @@ my %rules = (
 			basicwords  => basicwords(),
 			simplewords => simplewords(),
 			printsafe   => printsafe(),
-			paragraph   => paragraph()
+			paragraph   => paragraph(),
+			username    => username(),
+			password    => password()
 		},
 		constraints => {
 			realname    => { constraint_method => realname      },
 			basicwords  => { constraint_method => basicwords    },
 			simplewords => { constraint_method => simplewords   },
 			printsafe   => { constraint_method => printsafe     },
-			paragraph   => { constraint_method => paragraph     }
+			paragraph   => { constraint_method => paragraph     },
+			username    => { constraint_method => username      },
+			password    => { constraint_method => password      }
 		},
-        optional => [qw(realname simplewords basicwords printsafe paragraph)]
+        optional => [qw(realname simplewords basicwords printsafe paragraph username password)]
 	);
 
+my @tests = ( undef, '', 'safe', 'Pr;n+.5afe', 'Pr1nt 5afe' );
 
-my %examples = (
-	realname    => [{value => 'safe', result => 'safe'},{value => 'Pr;n+.5afe', result => undef}],
-	basicwords  => [{value => 'safe', result => 'safe'},{value => 'Pr;n+.5afe', result => undef}],
-	simplewords => [{value => 'safe', result => 'safe'},{value => 'Pr;n+.5afe', result => 'Pr;n+.5afe'}],
-	printsafe   => [{value => 'safe', result => 'safe'},{value => 'Pr;n+.5afe', result => 'Pr;n+.5afe'}],
-	paragraph   => [{value => 'safe', result => 'safe'},{value => 'Pr;n+.5afe', result => 'Pr;n+.5afe'}],
+my %results = (
+	realname    => [ undef, undef, 'safe', undef,         'Pr1nt 5afe' ],
+	basicwords  => [ undef, undef, 'safe', undef,         'Pr1nt 5afe' ],
+	simplewords => [ undef, undef, 'safe', 'Pr;n+.5afe',  'Pr1nt 5afe' ],
+	printsafe   => [ undef, undef, 'safe', 'Pr;n+.5afe',  'Pr1nt 5afe' ],
+	paragraph   => [ undef, undef, 'safe', 'Pr;n+.5afe',  'Pr1nt 5afe' ],
+	username    => [ undef, undef, 'safe', undef,         undef        ],
+	password    => [ undef, undef, 'safe', 'Pr;n+.5afe',  undef        ],
 );
 
-for my $method (keys %examples) {
-    for my $set (@{$examples{$method}}) {
-        my $results = Data::FormValidator->check({ $method => $set->{value} }, \%rules);
+for my $method (keys %results) {
+    for my $test (0 .. scalar(@tests)) {
+        my $results = Data::FormValidator->check({ $method => $tests[$test] }, \%rules);
         my $values = $results->valid;
-        is($values->{$method}, $set->{result}, "'$method' value '$set->{value}' matches result");
+        is($values->{$method}, $results{$method}->[$test], "'$method' value '$tests[$test]' matches expected result");
     }
 }
